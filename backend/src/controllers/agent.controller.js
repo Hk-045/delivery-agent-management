@@ -69,3 +69,21 @@ export const getAgent = async (req, res) => {
 
   res.status(200).json(agent);
 };
+
+export const updateAgent = async (req, res) => {
+  const { id } = req.params;
+  validateAgentId(id);
+  validateUpdateAgentData(req);
+
+  const data = sanitizeAgentData(req.body);                          
+  const agent = await prisma.agent.update({ where: { id }, data }); 
+
+  res.status(200).json(agent);
+};
+
+export const deleteAgent = async (req,res)=>{
+    const { id } = req.params;
+    validateAgentId(id);
+    await prisma.agent.delete({where : {id}})
+    res.status(204).send();
+}
