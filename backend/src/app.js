@@ -3,7 +3,7 @@ import cors from 'cors';
 import { config } from './config/env.js';
 import { notFound } from './middlewares/notFound.js';
 import { errorHandler } from './middlewares/errorHandler.js';
-
+import { agentRouter } from './routes/agent.routes.js';
 
 const app = express();
 
@@ -13,6 +13,7 @@ app.use(express.json());
 app.get('/health', (_req, res) => {
   res.status(200).json({ status: 'ok' });
 });
+app.use('/api/agents',agentRouter);
 
 app.use(notFound);
 app.use(errorHandler);
