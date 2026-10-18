@@ -4,6 +4,7 @@ import {
   validateUpdateAgentData,
   validateListQuery,
   sanitizeAgentData,
+  validateAgentId
 } from '../utils/validation.js';
 
 export const createAgent = async (req, res) => {
@@ -54,4 +55,17 @@ export const listAgents = async (req, res) => {
       totalPages: Math.ceil(total / limit),
     },
   });
+};
+
+export const getAgent = async (req, res) => {
+  const { id } = req.params;
+  validateAgentId(id);
+
+  const agent = await prisma.agent.findUnique({ where: { id } });
+
+  if (!agent) {
+    throw new AppError('Agent not found', 404);
+  }
+
+  res.status(200).json(agent);
 };
