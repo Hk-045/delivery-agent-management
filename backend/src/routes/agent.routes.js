@@ -1,6 +1,7 @@
 import express from 'express';
-import { createAgent } from '../controllers/agent.controller.js';
+import { createAgent, listAgents } from '../controllers/agent.controller.js';
 
 export const agentRouter = express.Router();
 
-agentRouter.post('/',createAgent);
+agentRouter.post('/', createAgent);
+agentRouter.get('/', listAgents);

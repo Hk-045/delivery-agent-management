@@ -78,3 +78,19 @@ export const validateAgentId = (id) => {
     throw new AppError('Invalid agent id', 400);
   }
 };
+
+export const validateListQuery = (req) => {
+  const { status, serviceArea, search, page, limit } = req.query;
+
+  if (status !== undefined && !ALLOWED_STATUS.includes(status)) {
+    throw new AppError('Status must be active or inactive', 400);
+  } else if (serviceArea !== undefined && (typeof serviceArea !== 'string' || serviceArea.trim().length > 100)) {
+    throw new AppError('Service area is not valid', 400);
+  } else if (search !== undefined && (typeof search !== 'string' || search.trim().length > 100)) {
+    throw new AppError('Search must be at most 100 characters', 400);
+  } else if (page !== undefined && (typeof page !== 'string' || !validator.isInt(page, { min: 1 }))) {
+    throw new AppError('Page must be a whole number, 1 or greater', 400);
+  } else if (limit !== undefined && (typeof limit !== 'string' || !validator.isInt(limit, { min: 1, max: 100 }))) {
+    throw new AppError('Limit must be a whole number between 1 and 100', 400);
+  }
+};
