@@ -7,7 +7,7 @@ import {
   validateAgentId
 } from '../utils/validation.js';
 
-import { getCache, setCache, agentKey, AGENT_TTL } from '../utils/cache.js';
+import { getCache, setCache, deleteCache, agentKey, AGENT_TTL } from '../utils/cache.js';
 
 export const createAgent = async (req, res) => {
   validateCreateAgentData(req);
@@ -88,15 +88,21 @@ export const updateAgent = async (req, res) => {
   validateAgentId(id);
   validateUpdateAgentData(req);
 
-  const data = sanitizeAgentData(req.body);                          
-  const agent = await prisma.agent.update({ where: { id }, data }); 
+  const data = sanitizeAgentData(req.body);
+  const agent = await prisma.agent.update({ where: { id }, data });
+
+  await deleteCache(agentKey(id));
 
   res.status(200).json(agent);
 };
 
-export const deleteAgent = async (req,res)=>{
-    const { id } = req.params;
-    validateAgentId(id);
-    await prisma.agent.delete({where : {id}})
-    res.status(204).send();
-}
+export const deleteAgent = async (req, res) => {
+  const { id } = req.params;
+  validateAgentId(id);
+
+  await prisma.agent.delete({ where: { id } });
+
+  await deleteCache(agentKey(id));
+
+  res.status(204).send();
+};
