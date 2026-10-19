@@ -15,9 +15,9 @@ const router = createBrowserRouter([
     errorElement: <NotFoundPage />,
     children: [
       { path: '/', element: <AgentListPage /> },
-      { path: '/agents/new', element: <AgentFormPage /> },
+      { path: '/agents/new', element: <AgentFormPage key="new" /> },
       { path: '/agents/:id', element: <AgentDetailPage /> },
-      { path: '/agents/:id/edit', element: <AgentFormPage /> },
+      { path: '/agents/:id/edit', element: <AgentFormPage key="edit" /> },
     ],
   },
 ]);

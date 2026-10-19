@@ -8,7 +8,9 @@ const App = () => {
         <Link to="/agents/new" className="btn">+ Add agent</Link>
       </header>
 
-      <Outlet />
+      <main>
+        <Outlet />
+      </main>
     </div>
   );
 };
