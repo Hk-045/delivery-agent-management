@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { API_URL } from './utils/constants';
+import AgentTable from './components/AgentTable';
 
 const App = () => {
   const [agents, setAgents] = useState([]);
@@ -37,13 +38,7 @@ const App = () => {
       {agents.length === 0 ? (
         <p>No agents found.</p>
       ) : (
-        <ul>
-          {agents.map((agent) => (
-            <li key={agent.id}>
-              {agent.fullName} ({agent.serviceArea})
-            </li>
-          ))}
-        </ul>
+        <AgentTable agents={agents} />
       )}
     </div>
   );
