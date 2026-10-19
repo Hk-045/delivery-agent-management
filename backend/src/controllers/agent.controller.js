@@ -7,6 +7,8 @@ import {
   validateAgentId
 } from '../utils/validation.js';
 
+import { getCache, setCache, agentKey, AGENT_TTL } from '../utils/cache.js';
+
 export const createAgent = async (req, res) => {
   validateCreateAgentData(req);
   const data = sanitizeAgentData(req.body);
@@ -61,12 +63,23 @@ export const getAgent = async (req, res) => {
   const { id } = req.params;
   validateAgentId(id);
 
+  const key = agentKey(id);
+  const cached = await getCache(key);
+
+  if (cached) {
+    res.set('X-Cache', 'HIT');
+    return res.status(200).json(cached);
+  }
+
   const agent = await prisma.agent.findUnique({ where: { id } });
 
   if (!agent) {
     throw new AppError('Agent not found', 404);
   }
 
+  await setCache(key, agent, AGENT_TTL);
+
+  res.set('X-Cache', 'MISS');
   res.status(200).json(agent);
 };
 
