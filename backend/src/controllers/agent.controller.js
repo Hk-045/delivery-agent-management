@@ -7,12 +7,15 @@ import {
   validateAgentId
 } from '../utils/validation.js';
 
-import { getCache, setCache, deleteCache, agentKey, AGENT_TTL } from '../utils/cache.js';
+import { getCache, setCache, deleteCache, getListVersion, bumpListVersion, agentKey, listKey, AGENT_TTL, LIST_TTL } from '../utils/cache.js';
 
 export const createAgent = async (req, res) => {
   validateCreateAgentData(req);
   const data = sanitizeAgentData(req.body);
   const agent = await prisma.agent.create({ data });
+
+  await bumpListVersion();
+
   res.status(201).json(agent);
 };
 
@@ -24,6 +27,21 @@ export const listAgents = async (req, res) => {
   const page = Number(req.query.page) || 1;
   const limit = Number(req.query.limit) || 20;
   const skip = (page - 1) * limit;
+
+  const version = await getListVersion();
+  const key = listKey(version, {
+    status,
+    serviceArea: serviceArea?.trim(),
+    search: search?.trim(),
+    page,
+    limit,
+  });
+
+  const cached = await getCache(key);
+  if (cached) {
+    res.set('X-Cache', 'HIT');
+    return res.status(200).json(cached);
+  }
 
   const where = {};
 
@@ -48,7 +66,7 @@ export const listAgents = async (req, res) => {
 
   const total = await prisma.agent.count({ where });
 
-  res.status(200).json({
+  const response = {
     data: agents,
     pagination: {
       page,
@@ -56,7 +74,12 @@ export const listAgents = async (req, res) => {
       total,
       totalPages: Math.ceil(total / limit),
     },
-  });
+  };
+
+  await setCache(key, response, LIST_TTL);
+
+  res.set('X-Cache', 'MISS');
+  res.status(200).json(response);
 };
 
 export const getAgent = async (req, res) => {
@@ -92,6 +115,7 @@ export const updateAgent = async (req, res) => {
   const agent = await prisma.agent.update({ where: { id }, data });
 
   await deleteCache(agentKey(id));
+  await bumpListVersion();
 
   res.status(200).json(agent);
 };
@@ -103,6 +127,7 @@ export const deleteAgent = async (req, res) => {
   await prisma.agent.delete({ where: { id } });
 
   await deleteCache(agentKey(id));
+  await bumpListVersion();
 
   res.status(204).send();
 };

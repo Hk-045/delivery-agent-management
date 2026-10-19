@@ -34,13 +34,13 @@ export const deleteCache = async (key) => {
 };
 
 export const getListVersion = async () => {
-  if (!redis.isReady) return null;
+  if (!redis.isReady) return '0';
   try {
     const version = await redis.get(LIST_VERSION_KEY);
     return version ?? '0';
   } catch (err) {
     console.error('Cache version read failed:', err.message);
-    return null;
+    return '0';
   }
 };
 
