@@ -1,3 +1,4 @@
+
 :root {
   --bg: #f5f6f8;
   --surface: #ffffff;
@@ -18,29 +19,8 @@
   --error-bg: #fee2e2;
   --error-text: #b91c1c;
   --radius: 8px;
-  color-scheme: light;
-}
 
-[data-theme='dark'] {
-  --bg: #111827;
-  --surface: #1f2937;
-  --surface-muted: #263244;
-  --text: #e5e7eb;
-  --muted: #9ca3af;
-  --border: #374151;
-  --input-border: #4b5563;
-  --primary: #3b82f6;
-  --primary-hover: #2563eb;
-  --danger: #ef4444;
-  --danger-hover: #dc2626;
-  --link: #60a5fa;
-  --success-bg: #14532d;
-  --success-text: #bbf7d0;
-  --neutral-bg: #374151;
-  --neutral-text: #e5e7eb;
-  --error-bg: #450a0a;
-  --error-text: #fecaca;
-  color-scheme: dark;
+  color-scheme: light;
 }
 
 * {
@@ -255,33 +235,9 @@ a {
   text-decoration: underline;
 }
 
-/* Status badge */
-.status {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 2px 10px;
-  border-radius: 12px;
-  font-size: 13px;
-}
-
-.status::before {
-  content: '';
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: currentColor;
-}
-
-.status-active {
-  background: var(--success-bg);
-  color: var(--success-text);
-}
-
-.status-inactive {
-  background: var(--neutral-bg);
-  color: var(--neutral-text);
-}
+/* Status */
+/* Plain active/inactive text */
+/* No badge, dot, background or extra padding */
 
 .actions {
   display: flex;
